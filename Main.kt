@@ -2,8 +2,12 @@ package sorting
 
 fun main(args: Array<String>) {
     val parser: Parser = if (args.isNotEmpty()) {
-        val parseType = args[1]
-        FactoryParser.create(parseType)
+        if (args.any { it == "-sortIntegers" }) {
+            FactoryParser.create("sortIntegers")
+        } else {
+            val parseType = args[1]
+            FactoryParser.create(parseType)
+        }
     } else {
         FactoryParser.create()
     }
@@ -14,6 +18,7 @@ object FactoryParser {
     fun create(type: String = "word"): Parser {
         return when (type) {
             "long" -> ParserForLongs()
+            "sortIntegers" -> ParserForIntegersSort()
             "line" -> ParserForLine()
             else -> ParserForWord()
         }
