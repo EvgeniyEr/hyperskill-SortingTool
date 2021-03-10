@@ -1,23 +1,20 @@
 package sorting
 
-class ParserForWord : Parser() {
-    override fun getInfo(): String {
-        var word: String
-        val qtyOfRepets = mutableMapOf<String, Int>()
+class ParserForWord(sortingType: SortingType) : Parser<String>(sortingType) {
 
-        return if (scanner.hasNext()) {
-            while (scanner.hasNext()) {
-                totalReps++
-                word = scanner.next()
-                qtyOfRepets[word] = (qtyOfRepets[word] ?: 0) + 1
-            }
-            val qtyOfSortedRepets = qtyOfRepets.toSortedMap(compareBy<String> { it.length }.thenBy { it })
-            var longestWord = qtyOfSortedRepets.lastKey()
-            occurrencePercentage = qtyOfRepets[longestWord]!! * 100 / totalReps
+    override val addTextToInfo = "words"
 
-            "Total words: $totalReps.\nThe longest word: $longestWord (${qtyOfRepets[longestWord]} time(s), $occurrencePercentage%)."
+    override fun readEntity(): String {
+        return scanner.next()
+    }
+
+    override fun sortData(){
+        if (sortingType == SortingType.NATURAL) {
+            entitiesOfParser.sort()
         } else {
-            "Total words: 0."
+            // Sort a map by values. Within the group, elements with equal values sorted naturally.
+            val comparator = compareBy<Pair<String, Int>>({ it.second }, { it.first })
+            qtyOfRepets = qtyOfRepets.toList().sortedWith(comparator).toMap().toMutableMap()
         }
     }
 }

@@ -1,24 +1,20 @@
 package sorting
 
-class ParserForLongs : Parser() {
+class ParserForLongs(sortingType: SortingType) : Parser<Long>(sortingType) {
 
-    override fun getInfo(): String {
-        var number: Long
-        val qtyOfRepets = mutableMapOf<Long, Int>()
+    override val addTextToInfo = "numbers"
 
-        return if (scanner.hasNext()) {
-            while (scanner.hasNext()) {
-                totalReps++
-                number = scanner.nextLong()
-                qtyOfRepets[number] = (qtyOfRepets[number] ?: 0) + 1
-            }
-            val qtyOfSortedRepets = qtyOfRepets.toSortedMap()
-            var greatestNumber = qtyOfSortedRepets.lastKey()
-            occurrencePercentage = qtyOfRepets[greatestNumber]!! * 100 / totalReps
+    override fun readEntity(): Long {
+        return scanner.nextLong()
+    }
 
-            "Total numbers: $totalReps.\nThe greatest number: $greatestNumber (${qtyOfRepets[greatestNumber]} time(s), $occurrencePercentage%)."
+    override fun sortData(){
+        if (sortingType == SortingType.NATURAL) {
+            entitiesOfParser.sort()
         } else {
-            "Total numbers: 0."
+            // Sort a map by values. Within the group, elements with equal values sorted naturally.
+            val comparator = compareBy<Pair<Long, Int>>({ it.second }, { it.first })
+            qtyOfRepets = qtyOfRepets.toList().sortedWith(comparator).toMap().toMutableMap()
         }
     }
 }

@@ -1,23 +1,39 @@
 package sorting
 
-class ParserForLine : Parser() {
-    override fun getInfo(): String {
-        var line: String
-        val qtyOfRepets = mutableMapOf<String, Int>()
+import kotlin.math.round
 
-        return if (scanner.hasNextLine()) {
-            while (scanner.hasNextLine()) {
-                totalReps++
-                line = scanner.nextLine()
-                qtyOfRepets[line] = (qtyOfRepets[line] ?: 0) + 1
-            }
-            val qtyOfSortedRepets = qtyOfRepets.toSortedMap(compareBy<String> { it.length }.thenBy { it })
-            var longestLine = qtyOfSortedRepets.lastKey()
-            occurrencePercentage = qtyOfRepets[longestLine]!! * 100 / totalReps
+class ParserForLine(sortingType: SortingType) : Parser<String>(sortingType) {
 
-            "Total lines: $totalReps.\nThe longest line:\n$longestLine\n(${qtyOfRepets[longestLine]} time(s), $occurrencePercentage%)."
+    override val addTextToInfo = "lines"
+
+    override fun readEntity(): String {
+        return scanner.nextLine()
+    }
+
+    override fun sortData(){
+        if (sortingType == SortingType.NATURAL) {
+            entitiesOfParser.sort()
         } else {
-            "Total lines: 0."
+            // Sort a map by values. Within the group, elements with equal values sorted naturally.
+            val comparator = compareBy<Pair<String, Int>>({ it.second }, { it.first })
+            qtyOfRepets = qtyOfRepets.toList().sortedWith(comparator).toMap().toMutableMap()
         }
+    }
+
+    override fun getInfo(): String {
+        val totalReps = entitiesOfParser.size
+        strBuilder.append("Total lines: $totalReps.\n")
+        if (sortingType == SortingType.NATURAL) {
+            strBuilder.append("Sorted data:\n")
+            for (line in entitiesOfParser) {
+                strBuilder.append("${line}\n")
+            }
+        } else {
+            for (repeats in qtyOfRepets) {
+                occurrencePercentage = repeats.value * 100.0 / totalReps
+                strBuilder.append("${repeats.key}: ${repeats.value} time(s), ${round(occurrencePercentage)}%.\n")
+            }
+        }
+        return strBuilder.toString()
     }
 }
