@@ -1,14 +1,17 @@
 package sorting
 
+import java.util.*
+
 class ParserForLongs(sortingType: SortingType) : Parser<Long>(sortingType) {
 
     override val addTextToInfo = "numbers"
 
     override fun readEntity(): Long {
-        return scanner.nextLong()
+        val next = scanner.next()
+        return next.toLongOrNull() ?: throw InputMismatchException("\"$next\" is not a long. It will be skipped.")
     }
 
-    override fun sortData(){
+    override fun sortData() {
         if (sortingType == SortingType.NATURAL) {
             entitiesOfParser.sort()
         } else {

@@ -55,9 +55,13 @@ abstract class Parser<T>(val sortingType: SortingType) {
     private fun readData() {
         var entity: T
         while (scanner.hasNext()) {
-            entity = readEntity()
-            qtyOfRepets[entity] = (qtyOfRepets[entity] ?: 0) + 1
-            entitiesOfParser.add(entity)
+            try {
+                entity = readEntity()
+                qtyOfRepets[entity] = (qtyOfRepets[entity] ?: 0) + 1
+                entitiesOfParser.add(entity)
+            } catch (e: InputMismatchException) {
+                println(e.message)
+            }
         }
     }
 }

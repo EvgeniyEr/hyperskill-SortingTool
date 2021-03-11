@@ -7,8 +7,29 @@ fun main(args: Array<String>) {
     if (args.isNotEmpty()) {
         for (i in args.indices) {
             when (args[i]) {
-                "-dataType" -> dataType = args[i + 1]
-                "-sortingType" -> sortingType = Parser.SortingType.findByString(args[i + 1])
+                "-dataType" -> {
+                    try {
+                        dataType = args[i + 1]
+                    } catch (e: ArrayIndexOutOfBoundsException) {
+                        println("No data type defined!")
+                        return
+                    }
+                }
+                "-sortingType" -> {
+                    try {
+                        sortingType = Parser.SortingType.findByString(args[i + 1])
+                    } catch (e: ArrayIndexOutOfBoundsException) {
+                        println("No sorting type defined!")
+                        return
+                    }
+                }
+                else -> {
+                    val arg = args[i]
+                    if (args[i].matches(Regex("-\\w+"))) {
+                        println("\"$arg\" is not a valid parameter. It will be skipped.")
+
+                    }
+                }
             }
         }
     }
