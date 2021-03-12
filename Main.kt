@@ -1,12 +1,32 @@
 package sorting
 
+import java.io.File
+
 fun main(args: Array<String>) {
+    var nameInputFile = ""
+    var nameOutputFile = ""
     var dataType = "word"
     var sortingType = Parser.SortingType.NATURAL
 
     if (args.isNotEmpty()) {
         for (i in args.indices) {
             when (args[i]) {
+                "-inputFile" -> {
+                    try {
+                        nameInputFile = args[i + 1]
+                    } catch (e: ArrayIndexOutOfBoundsException) {
+                        println("No input file defined!")
+                        return
+                    }
+                }
+                "-outputFile" -> {
+                    try {
+                        nameOutputFile = args[i + 1]
+                    } catch (e: ArrayIndexOutOfBoundsException) {
+                        println("No output file defined!")
+                        return
+                    }
+                }
                 "-dataType" -> {
                     try {
                         dataType = args[i + 1]
@@ -38,5 +58,11 @@ fun main(args: Array<String>) {
         "line" -> ParserForLine(sortingType)
         else -> ParserForWord(sortingType)
     }
-    print(parser.getInfo())
+
+    val info = parser.readData(nameInputFile).getInfo()
+    if (nameOutputFile.isNotEmpty()) {
+        File(nameOutputFile).writeText(info)
+    } else {
+        print(info)
+    }
 }

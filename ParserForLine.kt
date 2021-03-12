@@ -5,19 +5,16 @@ import kotlin.math.round
 class ParserForLine(sortingType: SortingType) : Parser<String>(sortingType) {
 
     override val addTextToInfo = "lines"
+    override val comparatorOfNaturalSorting = compareBy<String> { it }
+    override val comparatorOfByCountSorting = compareBy<Pair<String, Int>>({ it.second }, { it.first })
 
     override fun readEntity(): String {
         return scanner.nextLine()
     }
 
-    override fun sortData(){
-        if (sortingType == SortingType.NATURAL) {
-            entitiesOfParser.sort()
-        } else {
-            // Sort a map by values. Within the group, elements with equal values sorted naturally.
-            val comparator = compareBy<Pair<String, Int>>({ it.second }, { it.first })
-            qtyOfRepets = qtyOfRepets.toList().sortedWith(comparator).toMap().toMutableMap()
-        }
+    override fun readEntityOfFile(line: String) {
+        qtyOfRepets[line] = (qtyOfRepets[line] ?: 0) + 1
+        entitiesOfParser.add(line)
     }
 
     override fun getInfo(): String {
